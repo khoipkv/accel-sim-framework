@@ -20,3 +20,6 @@ compile_commands.json
 .claude
 CLAUDE.md
 .cursor
+
+# Result files
+*.gz

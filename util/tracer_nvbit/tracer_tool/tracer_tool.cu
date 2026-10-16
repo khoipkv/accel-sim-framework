@@ -1268,8 +1268,12 @@ void *recv_thread_fun(void *args) {
             // This warp is not in the warp_counter_map, so we create a counter
             // for this warp using the spinlock instruction indices for the
             // current kernel
-            std::vector<uint32_t> &indices =
-                *(spinlock_instr_map[ctx_current_kernel_name[ctx]]);
+            static const std::vector<uint32_t> empty_indices;
+            auto it = spinlock_instr_map.find(ctx_current_kernel_name[ctx]);
+            const std::vector<uint32_t> &indices =
+                (it != spinlock_instr_map.end() && it->second != nullptr)
+                    ? *(it->second)
+                    : empty_indices;
             warp_counter_map[warp_key] = create_counter(indices);
             if (spinlock_handling_mode == SPINLOCK_MODE_MARK_REGION) {
               warp_replay_map[warp_key] = {false, false, 0};

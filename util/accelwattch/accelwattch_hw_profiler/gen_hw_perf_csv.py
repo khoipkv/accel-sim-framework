@@ -441,7 +441,7 @@ for file in path:
         combine_kernel = combine_kernel[1:]
         # print("kernel", "<" + kernel_names[kernel] + ">","found",count,"times")
 
-        if (combine_kernel.shape[0]) is 0:
+        if (combine_kernel.shape[0]) == 0:
             # parsing error or string comparision error
             exit("ERROR,", kernel_names[kernel], "not found")
 

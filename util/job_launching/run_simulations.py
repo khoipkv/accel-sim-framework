@@ -69,14 +69,19 @@ def extract_version(exec_path, simulator):
     else:
         regex_base = "accelsim-commit"
     regex_str = r".*({0}[^\s^']+).*".format(regex_base)
+    if not os.path.exists(exec_path):
+        return ""
     strings_process = Popen(["strings", exec_path], stdout=PIPE)
     grep_process = Popen(
         ["grep", regex_base], stdin=strings_process.stdout, stdout=PIPE
     )
     strings_process.stdout.close()
     out, err = grep_process.communicate()
-    version = re.sub(regex_str, r"\1", str(out.rstrip()))
-    return version
+    out_str = out.decode("utf-8", errors="ignore").strip()
+    if not out_str:
+        return ""
+    m = re.search(regex_base + r"[^\s^']+", out_str)
+    return m.group(0) if m else out_str
 
 
 #######################################################################################
