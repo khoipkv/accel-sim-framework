@@ -52,6 +52,10 @@ A100:
 H100:
     base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM90_H100/gpgpusim.config"
 
+# A100-class GPU with Samsung HBM2-PIM memory (64 pseudo-channels)
+A100_HBM2PIM:
+    base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM80_HBM2PIM/gpgpusim.config"
+
 H200:
     base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM90_H200/gpgpusim.config"
 
@@ -199,3 +203,12 @@ Accelwattch_PTX_SIM:
     extra_params: "-power_simulation_enabled 1
     \n-power_simulation_mode 0
     \n-accelwattch_xml_file accelwattch_ptx_sim.xml"
+
+# HBM-PIM variants of A100_HBM2PIM, e.g. A100_HBM2PIM-PIM16CH-SASS
+# 16 pseudo-channels (PIMSimulator's system_hbm.ini) instead of 64
+PIM16CH:
+    extra_params: "-gpgpu_n_mem 16"
+
+# same memory system with the PIM model turned off
+NOPIM:
+    extra_params: "-gpgpu_pim_enabled 0"
