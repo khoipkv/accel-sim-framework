@@ -419,6 +419,11 @@ std::vector<trace_command> trace_parser::parse_commandlist_file() {
       filepath = directory + "/" + line;
       command.command_string = filepath;
       commandlist.push_back(command);
+    } else if (line.substr(0, 9) == "PIMKernel") {
+      trace_command command;
+      command.command_string = line;
+      command.m_type = command_type::pim_kernel_launch;
+      commandlist.push_back(command);
     }
     // ignore gpu_to_cpu_memory_cpy
   }

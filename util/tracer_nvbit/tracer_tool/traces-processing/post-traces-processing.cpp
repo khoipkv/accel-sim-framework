@@ -257,7 +257,9 @@ int main(int argc, char **argv) {
       getline(ifs, line);
       if (line.empty())
         continue;
-      else if (line.substr(0, 6) == "Memcpy") {
+      else if (line.substr(0, 6) == "Memcpy" ||
+               line.substr(0, 9) == "PIMKernel") {
+        // PIMKernel: HBM-PIM kernel command (Accel-Sim PIM model)
         output_lines.push_back(line);
       } else if (line.substr(0, 6) == "kernel") {
         filepath = directory + "/" + line;

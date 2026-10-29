@@ -212,3 +212,42 @@ PIM16CH:
 # same memory system with the PIM model turned off
 NOPIM:
     extra_params: "-gpgpu_pim_enabled 0"
+
+# don't fill L2 on cudaMemcpy: data copied before a kernel starts in DRAM
+COLDL2:
+    extra_params: "-gpgpu_perf_sim_memcpy 0"
+
+# SM80_A100's address-mapping pattern (256 B channel interleave, dramid@8) on
+# the HBM2-PIM device geometry (5 column, 4 bank, 14 row bits), instead of
+# PIMSimulator's Scheme8 (32 B interleave). For GPU-side sensitivity runs; PIM
+# kernels build their commands per channel and don't use this mapping.
+A100ADDR:
+    extra_params: "-gpgpu_mem_addr_mapping dramid@8;00000000.00000000.00000000.00000000.0000RRRR.RRRRRRRR.RRBBBCCC.BCCSSSSS"
+
+# SM80_A100's bank-group policy (lower bank bits pick the group). PIM wants 0
+# so that banks 0 and 1 share a group; only use this for GPU-only runs.
+A100BG:
+    extra_params: "-dram_bnkgrp_indexing_policy 1"
+
+# Diagnostics for GPU-side DRAM efficiency on A100_HBM2PIM:
+# NOREF: SM80_HBM2PIM's DRAM timings without refresh (REFI/RFC left at 0)
+NOREF:
+    extra_params: "-gpgpu_dram_timing_opt nbk=16:CCD=2:RRD=4:RRDL=6:RCD=14:RCDWR=10:RAS=33:RP=14:RC=47:CL=20:WL=8:CDLR=9:WR=16:nbkgrp=4:CCDL=4:RTPL=0:RTP=3:RTW=15"
+# BIGQ: 4x the FR-FCFS scheduler window (64 -> 256 requests per channel)
+BIGQ:
+    extra_params: "-gpgpu_frfcfs_dram_sched_queue_size 256"
+# DUALBUS: separate row and column command buses, as in SM80_A100
+DUALBUS:
+    extra_params: "-dram_dual_bus_interface 1"
+
+# Channel (memory partition) hashing; SM80_A100 and SM80_HBM2PIM use 0 (linear)
+# XORHASH: XOR of higher address bits into the channel id (power-of-2 channels)
+XORHASH:
+    extra_params: "-gpgpu_memory_partition_indexing 1"
+# IPOLYMOD: IPOLY + modulo, as SM90_H100/SM89_L40S (total L2 slices must be
+# 16/32/64 x odd; not usable with A100_HBM2PIM's 128 slices)
+IPOLYMOD:
+    extra_params: "-gpgpu_memory_partition_indexing 6"
+# RANDHASH: random channel per address chunk (unrealistic upper bound)
+RANDHASH:
+    extra_params: "-gpgpu_memory_partition_indexing 4"

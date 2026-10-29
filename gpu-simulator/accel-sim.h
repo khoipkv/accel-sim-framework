@@ -18,6 +18,9 @@
 #include "option_parser.h"
 #include "trace_driven.h"
 
+// stream id reported for PIM kernels (no traced CUDA stream uses it)
+static const unsigned long long PIM_KERNEL_STREAM_ID = ~0ull;
+
 class accel_sim_framework {
  public:
   accel_sim_framework(int argc, const char **argv);
@@ -48,6 +51,7 @@ class accel_sim_framework {
   void parse_commandlist();
   void cleanup(unsigned finished_kernel);
   unsigned simulate();
+  void run_pim_kernel(const std::string &command);
   trace_kernel_info_t *create_kernel_info(kernel_trace_t *kernel_trace_info,
                                           gpgpu_context *m_gpgpu_context,
                                           trace_config *config,

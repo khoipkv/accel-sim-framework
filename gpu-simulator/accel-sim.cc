@@ -112,6 +112,13 @@ void accel_sim_framework::parse_commandlist() {
       std::cout << "Header info loaded for kernel command : "
                 << commandlist[commandlist_index].command_string << std::endl;
       commandlist_index++;
+    } else if (commandlist[commandlist_index].m_type ==
+               command_type::pim_kernel_launch) {
+      // a PIM kernel takes the memory channels: let in-flight kernels finish
+      // first, then run it to completion
+      if (!kernels_info.empty()) break;
+      run_pim_kernel(commandlist[commandlist_index].command_string);
+      commandlist_index++;
     } else {
       // unsupported commands will fail the simulation
       assert(0 && "Undefined Command");
@@ -145,6 +152,21 @@ void accel_sim_framework::cleanup(unsigned finished_kernel) {
     m_gpgpu_sim->print_stats(finished_kernel_cuda_stream_id);
     m_gpgpu_sim->perf_counters.print_counters();
   }
+}
+
+void accel_sim_framework::run_pim_kernel(const std::string &command) {
+  std::cout << "launching PIM kernel command : " << command << std::endl;
+  if (!m_gpgpu_sim->launch_pim_kernel(command)) exit(1);
+  while (m_gpgpu_sim->pim_kernel_busy() &&
+         !m_gpgpu_sim->cycle_insn_cta_max_hit()) {
+    m_gpgpu_sim->cycle();
+    sim_cycles = true;
+    m_gpgpu_sim->deadlock_check();
+  }
+  m_gpgpu_sim->print_stats(PIM_KERNEL_STREAM_ID);
+  m_gpgpu_sim->print_pim_kernel_stats();
+  m_gpgpu_sim->update_stats();
+  m_gpgpu_context->print_simulation_time();
 }
 
 unsigned accel_sim_framework::simulate() {
