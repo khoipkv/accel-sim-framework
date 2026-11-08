@@ -1,0 +1,23 @@
+# GPU vs HBM-PIM GEMV comparison (trace-driven only; see util/pim/README.md).
+#
+# Trace root (-T): hw_run/traces/hbm2pim-gemv/
+#   gemv-sm80/4096_4096/traces        GPU GEMV traced on an L40S, sm_80 SASS
+#                                     (link to hw_run/traces/l40-device-0/12.6/gemv-sm80)
+#   pim-gemv/4096_4096/traces         kernelslist.g: PIMKernel,gemv,out=4096,in=4096
+#   pim-gemv-stream/4096_4096/traces  kernelslist.g: PIMKernel,stream,baseline=gemv,out=4096,in=4096
+#
+# Run on A100_HBM2PIM-SASS (memcpy fills L2) and A100_HBM2PIM-COLDL2-SASS
+# (weights stay in DRAM, the fair GPU baseline for PIM).
+hbm2pim-gemv:
+    exec_dir: "$GPUAPPS_ROOT/bin/$CUDA_VERSION/release/"
+    data_dirs: ""
+    execs:
+        - gemv-sm80:
+            - args: 4096 4096
+              accel-sim-mem: 4G
+        - pim-gemv:
+            - args: 4096 4096
+              accel-sim-mem: 2G
+        - pim-gemv-stream:
+            - args: 4096 4096
+              accel-sim-mem: 2G

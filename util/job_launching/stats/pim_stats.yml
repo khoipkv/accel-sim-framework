@@ -1,0 +1,34 @@
+# HBM-PIM kernel statistics (configs with -gpgpu_pim_enabled 1, kernels
+# launched by "PIMKernel,..." commands in kernelslist.g). Use with:
+#   ./util/job_launching/get_stats.py -k -s ./util/job_launching/stats/pim_stats.yml -N <run>
+# Each PIM kernel prints its own block, so the values are per kernel.
+
+collect_aggregate:
+    - 'gpu_tot_sim_cycle\s*=\s*(.*)'
+    - 'kernel_launch_uid\s*=\s*(.*)'
+
+collect_abs:
+    - 'gpu_sim_cycle\s*=\s*(.*)'
+    - 'pim_kernel_dram_cycles\s*=\s*(.*)'
+    - 'pim_kernel_core_cycles\s*=\s*(.*)'
+    - 'pim_kernel_time_us\s*=\s*(.*)'
+    - 'pim_kernel_sim_channels\s*=\s*(.*)'
+    - 'pim_kernel_transactions_per_channel\s*=\s*(.*)'
+    - 'pim_kernel_n_act\s*=\s*(.*)'
+    - 'pim_kernel_n_pre\s*=\s*(.*)'
+    - 'pim_kernel_n_rd\s*=\s*(.*)'
+    - 'pim_kernel_n_wr\s*=\s*(.*)'
+    - 'pim_kernel_n_ref\s*=\s*(.*)'
+    - 'pim_kernel_cycles_sb\s*=\s*(.*)'
+    - 'pim_kernel_cycles_hab\s*=\s*(.*)'
+    - 'pim_kernel_cycles_hab_pim\s*=\s*(.*)'
+    - 'pim_kernel_allbank_act\s*=\s*(.*)'
+    - 'pim_kernel_allbank_rd\s*=\s*(.*)'
+    - 'pim_kernel_allbank_wr\s*=\s*(.*)'
+    - 'pim_kernel_pim_cmds\s*=\s*(.*)'
+    - 'pim_kernel_mac_lane_ops\s*=\s*(.*)'
+    - 'pim_kernel_dram_bw_GBps\s*=\s*(.*)'
+    - 'pim_kernel_internal_bw_GBps\s*=\s*(.*)'
+    - 'pim_kernel_selfcheck\s*=\s*(.*)'
+
+collect_rates: []
